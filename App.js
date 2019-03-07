@@ -24,18 +24,33 @@ export default class App extends React.Component {
   componentDidMount() {
   }
 
-  onSnap () {
+  async onSnap () {
     if (this.camera) {
-      this.camera.takePictureAsync({
+      const photo = await this.camera.takePictureAsync({
         base64: true,
-        onPictureSaved: this.onPictureSaved
+        quality: 0.6
       });
+      console.log(`photo: ${photo.uri}`)
+      await fetch('https://164d5161.ngrok.io/food-labels', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          base64: photo.base64,
+          dimensions: {
+            height: photo.height,
+            width: photo.width
+          }
+        })
+      })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json)
+        MediaLibrary.createAssetAsync(photo.uri);
+      }).catch((reason) => {console.log(reason)});
     }
-  }
-
-  async onPictureSaved (photo) {
-    await MediaLibrary.createAssetAsync(photo.uri);
-    console.log('yee');
   }
 
   async getCameraRatio() {
