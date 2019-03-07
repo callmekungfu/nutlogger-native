@@ -24,6 +24,7 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "Integration of google vision and nutrition tracking"
   }
 }

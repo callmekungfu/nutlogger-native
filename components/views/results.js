@@ -34,6 +34,9 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     backgroundColor: 'transparent'
   },
+  displayNone: {
+    display: 'none',
+  },
   infoViewer: {
     marginLeft: 5,
     marginRight: 5,

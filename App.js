@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Animated } from 'react-native';
 import { Camera, Permissions, MediaLibrary } from 'expo';
 import SearchResults from './components/views/results';
 
@@ -7,6 +7,7 @@ export default class App extends React.Component {
   state = {
     hasCameraPermission: null,
     resultsReceived: false,
+    fadeResults: new Animated.Value(0),
     type: Camera.Constants.Type.back,
     ratio: '4:3',
     labelData: []
@@ -55,8 +56,15 @@ export default class App extends React.Component {
         this.setState({
           resultsReceived: true,
           labelData: json.labelAnnotations
-        })
-        this.camera.resumePreview();
+        });
+        Animated.timing(
+          this.state.fadeResults,
+          {
+            toValue: 1,
+            duration: 1000,
+          }
+        ).start();
+        // this.camera.resumePreview();
         MediaLibrary.createAssetAsync(photo.uri);
       }).catch((reason) => {
         console.log(reason);
@@ -98,50 +106,49 @@ export default class App extends React.Component {
             ratio={this.state.ratio} 
             onCameraReady={this.getCameraRatio}
             ref={ref => {this.camera = ref}}>
-              {this.state.resultsReceived ? <SearchResults data={this.state.labelData} /> : <View
-              style={{
-                flex: 1,
-                backgroundColor: 'transparent',
-                flexDirection: 'row',
-                padding: 20,
-                marginBottom: 20, 
-              }}>
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }}
-                onPress={() => {
-                  this.setState({
-                    type: this.state.type === Camera.Constants.Type.back 
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back,
-                  })
-                }}>
-                <Text style={{
-                  fontSize: 25,
-                  color: 'white',
-                }}>
-                  {' '}Flip{' '}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flex: 2,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }}
-                onPress={this.onSnap}>
-                <Text style={{
-                  fontSize: 25,
-                  color: 'white',
-                }}>
-                  {' '}SNAP{' '}
-                </Text>
-              </TouchableOpacity>
-            </View>}
+              <View style={{ flex: 1 }}>
+                <Animated.View style={{ flex: 1, opacity: this.state.fadeResults}}>
+                  <SearchResults data={this.state.labelData}/>
+                </Animated.View>
+                <View style={this.state.resultsReceived ? styles.displayNone : styles.controls}>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      alignSelf: 'flex-end',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => {
+                      this.setState({
+                        type: this.state.type === Camera.Constants.Type.back 
+                          ? Camera.Constants.Type.front
+                          : Camera.Constants.Type.back,
+                      })
+                    }}>
+                    <Text style={{
+                      fontSize: 25,
+                      color: 'white',
+                    }}>
+                      {' '}Flip{' '}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      flex: 2,
+                      alignSelf: 'flex-end',
+                      alignItems: 'center',
+                    }}
+                    onPress={this.onSnap}>
+                    <Text style={{
+                      fontSize: 25,
+                      color: 'white',
+                    }}>
+                      {' '}RECOGNIZE{' '}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
           </Camera>
+          
         </View>
       )
     }
@@ -154,6 +161,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  displayNone: {
+    display: 'none',
+  },
+  controls: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    padding: 20,
+    marginBottom: 20, 
+  },
+  showResults: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    padding: 10,
+  },
+  hidden: {
+    opacity: 0
   },
   failed: {
     color: 'red'
