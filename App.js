@@ -1,12 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
 import { Camera, Permissions, MediaLibrary } from 'expo';
+import SearchResults from './components/views/results';
 
 export default class App extends React.Component {
   state = {
     hasCameraPermission: null,
+    resultsReceived: false,
     type: Camera.Constants.Type.back,
-    ratio: '4:3'
+    ratio: '4:3',
+    labelData: []
   }
 
   constructor(props) {
@@ -30,6 +33,7 @@ export default class App extends React.Component {
         base64: true,
         quality: 0.6
       });
+      this.camera.pausePreview();
       console.log(`photo: ${photo.uri}`)
       await fetch('https://164d5161.ngrok.io/food-labels', {
         method: 'POST',
@@ -48,8 +52,16 @@ export default class App extends React.Component {
       .then((response) => response.json())
       .then((json) => {
         console.log(json)
+        this.setState({
+          resultsReceived: true,
+          labelData: json.labelAnnotations
+        })
+        this.camera.resumePreview();
         MediaLibrary.createAssetAsync(photo.uri);
-      }).catch((reason) => {console.log(reason)});
+      }).catch((reason) => {
+        console.log(reason);
+        // this.camera.resumePreview();
+      });
     }
   }
 
@@ -86,7 +98,7 @@ export default class App extends React.Component {
             ratio={this.state.ratio} 
             onCameraReady={this.getCameraRatio}
             ref={ref => {this.camera = ref}}>
-            <View
+              {this.state.resultsReceived ? <SearchResults data={this.state.labelData} /> : <View
               style={{
                 flex: 1,
                 backgroundColor: 'transparent',
@@ -128,7 +140,7 @@ export default class App extends React.Component {
                   {' '}SNAP{' '}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View>}
           </Camera>
         </View>
       )
