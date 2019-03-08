@@ -5,6 +5,8 @@ import {
   Text,
   View,
   FlatList,
+  Button,
+  TouchableNativeFeedback,
 } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -55,22 +57,34 @@ export default class SearchResults extends React.Component {
   keyExtractor = item => item.mid;
 
   render() {
-    const { data } = this.props;
+    const { data, onDismiss } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.infoViewer}>
           <Text style={styles.header}>Select the best description</Text>
           <FlatList
+            style={{ marginBottom: 15 }}
             data={data}
             renderItem={({ item }) => (
-              <View style={styles.result}>
-                <Text style={styles.label}>{item.description}</Text>
-                <Text style={styles.confidence}>
-                  {Math.floor(item.score * 10000) / 100}%
-                </Text>
-              </View>
+              <TouchableNativeFeedback
+                style={{ flex: 1 }}
+                background={TouchableNativeFeedback.SelectableBackground()}
+              >
+                <View style={styles.result}>
+                  <Text style={styles.label}>{item.description}</Text>
+                  <Text style={styles.confidence}>
+                    {Math.floor(item.score * 10000) / 100}%
+                  </Text>
+                </View>
+              </TouchableNativeFeedback>
             )}
             keyExtractor={this.keyExtractor}
+          />
+          <Button
+            title="Close"
+            color="#000000"
+            onPress={onDismiss}
+            accessibilityLabel="Close the results and start a new recognition session"
           />
         </View>
       </View>

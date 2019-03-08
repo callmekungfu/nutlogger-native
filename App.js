@@ -51,11 +51,13 @@ export default class App extends React.Component {
     type: Camera.Constants.Type.back,
     ratio: '4:3',
     labelData: [],
+    loading: false,
   }
 
   constructor(props) {
     super(props);
     this.getCameraRatio = this.getCameraRatio.bind(this);
+    this.onDismissResults = this.onDismissResults.bind(this);
     this.onSnap = this.onSnap.bind(this);
   }
 
@@ -86,14 +88,39 @@ export default class App extends React.Component {
     }, 5000);
   }
 
+  onDismissResults() {
+    const { fadeResults } = this.state;
+    Animated.timing(
+      fadeResults,
+      {
+        toValue: 0,
+        duration: 500,
+      },
+    ).start(() => {
+      this.setState({
+        resultsReceived: false,
+        loading: false,
+        fadeResults: new Animated.Value(0),
+      });
+      this.camera.resumePreview();
+    });
+  }
+
   async onSnap() {
     if (this.camera) {
+      // Get Photo (async)
       const photo = await this.camera.takePictureAsync({
         base64: true,
         quality: 0.6,
       });
+
+      // UI manipulation
       this.camera.pausePreview();
-      console.log(`photo: ${photo.uri}`);
+      this.setState({
+        loading: true,
+      });
+
+      // Send photo to be processed as base64
       await fetch('https://164d5161.ngrok.io/food-labels', {
         method: 'POST',
         headers: {
@@ -120,14 +147,13 @@ export default class App extends React.Component {
             fadeResults,
             {
               toValue: 1,
-              duration: 1000,
+              duration: 500,
             },
           ).start();
-          // this.camera.resumePreview();
           MediaLibrary.createAssetAsync(photo.uri);
         }).catch((reason) => {
           console.log(reason);
-        // this.camera.resumePreview();
+          this.camera.resumePreview();
         });
     }
   }
@@ -172,6 +198,7 @@ export default class App extends React.Component {
       fadeResults,
       labelData,
       resultsReceived,
+      loading,
     } = this.state;
 
     return (
@@ -185,7 +212,7 @@ export default class App extends React.Component {
         >
           <View style={{ flex: 1 }}>
             <Animated.View style={{ flex: 1, opacity: fadeResults }}>
-              <SearchResults data={labelData} />
+              <SearchResults data={labelData} onDismiss={this.onDismissResults} />
             </Animated.View>
             <View style={resultsReceived ? styles.displayNone : styles.controls}>
               <TouchableOpacity
@@ -201,6 +228,7 @@ export default class App extends React.Component {
                       : Camera.Constants.Type.back,
                   });
                 }}
+                disabled={loading}
               >
                 <Text
                   style={{
@@ -220,6 +248,7 @@ export default class App extends React.Component {
                   alignItems: 'center',
                 }}
                 onPress={this.onSnap}
+                disabled={loading}
               >
                 <Text
                   style={{
@@ -228,7 +257,7 @@ export default class App extends React.Component {
                   }}
                 >
                   {' '}
-                  RECOGNIZE
+                  {loading ? 'LOADING' : 'RECOGNIZE'}
                   {' '}
                 </Text>
               </TouchableOpacity>
