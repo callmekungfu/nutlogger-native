@@ -1,6 +1,11 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TouchableOpacity, Platform, Animated,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Platform,
+  Animated,
 } from 'react-native';
 import { Camera, Permissions, MediaLibrary } from 'expo';
 import SearchResults from './components/views/results';
