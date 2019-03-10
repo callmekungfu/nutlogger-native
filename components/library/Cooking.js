@@ -1,5 +1,5 @@
 export default class Ingredient {
-  static UNITS_US = {
+  static UNITS = {
     teaspoon: {
       type: 'volume',
       name: 'teaspoon',
