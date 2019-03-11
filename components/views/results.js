@@ -273,6 +273,8 @@ export default class SearchResults extends React.Component {
           <Text style={styles.header}>
             {this.renderTitle()}
           </Text>
+          {showSearchResults || showNutrition ? <Text>Powered By Nutritionix</Text> : null}
+          <Text>Powered By Nutritionix</Text>
           {showLabeling ? (
             <Animated.View style={{ opacity: labelAnimation }}>
               <FlatList
