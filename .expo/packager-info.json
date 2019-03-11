@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 17784,
-  "expoServerNgrokUrl": "https://ab-ibt.callmekungfu.nutlogger.exp.direct",
-  "packagerNgrokUrl": "https://packager.ab-ibt.callmekungfu.nutlogger.exp.direct",
-  "ngrokPid": 14596
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }
