@@ -10,12 +10,14 @@ import {
   Button,
   TouchableNativeFeedback,
   Animated,
+  ScrollView,
   StatusBar,
   Easing,
   Image,
   TextInput,
   Picker,
 } from 'react-native';
+import NutritionField from '../components/nutritionField';
 
 const styles = StyleSheet.create({
   container: {
@@ -84,6 +86,7 @@ export default class SearchResults extends React.Component {
     showLabeling: true,
     showSearchResults: false,
     showNutrition: false,
+    nutritionData: null,
     nutritionPage: {
       name: null,
       picture: null,
@@ -173,6 +176,9 @@ export default class SearchResults extends React.Component {
       });
       const json = await response.json();
       console.log(json);
+      this.setState({
+        nutritionData: json,
+      });
     } catch (error) {
       console.log('Error:', error);
     }
@@ -250,6 +256,7 @@ export default class SearchResults extends React.Component {
       searchResults,
       showLabeling,
       nutritionPage,
+      nutritionData,
     } = this.state;
     return (
       <View style={styles.container} onLayout={this.getMaxHeight}>
@@ -366,6 +373,13 @@ export default class SearchResults extends React.Component {
                 </Picker>
               </View>
             </View>
+            {nutritionData ? (
+              <ScrollView>
+                <NutritionField data={nutritionData.foods[0].nf_calories} title="Calories" fontSize={20} />
+                <NutritionField data={nutritionData.foods[0].nf_total_fat} title="Total Fat" fontSize={16} />
+                <NutritionField data={nutritionData.foods[0].nf_total_carbohydrate} title="Carbohydrate" fontSize={16} />
+              </ScrollView>
+            ) : null}
           </Animated.ScrollView>
         </Animated.View>
       </View>
