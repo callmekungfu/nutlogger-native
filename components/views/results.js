@@ -72,6 +72,8 @@ const styles = StyleSheet.create({
   },
 });
 
+let units = ['grams', 'cups', 'pounds', 'kilograms', 'ounces'];
+
 export default class SearchResults extends React.Component {
   static capitalize(name) {
     if (name) {
@@ -130,6 +132,9 @@ export default class SearchResults extends React.Component {
   onSearchResultPress(name, picture, unit) {
     const { nutritionPage } = this.state;
     const nutritionPageCopy = JSON.parse(JSON.stringify(nutritionPage));
+    if (units.indexOf(unit) === -1) {
+      units.unshift(unit);
+    }
     nutritionPageCopy.name = name;
     nutritionPageCopy.picture = picture;
     nutritionPageCopy.unit = unit;
@@ -255,6 +260,7 @@ export default class SearchResults extends React.Component {
       showSearchResults,
       searchResults,
       showLabeling,
+      showNutrition,
       nutritionPage,
       nutritionData,
     } = this.state;
@@ -329,58 +335,58 @@ export default class SearchResults extends React.Component {
             </Animated.ScrollView>
           ) : null
           }
-          <Animated.ScrollView>
-            <View style={styles.nutritionHeader}>
-              <Image
-                source={{ uri: nutritionPage.picture }}
-                style={{ width: 100, height: 100, marginBottom: 15 }}
-              />
-              <Text style={{ fontSize: 22 }}>{SearchResults.capitalize(nutritionPage.name)}</Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <TextInput
-                  style={{
-                    height: 50,
-                    textAlign:
-                    'center',
-                    fontSize: 18,
-                    width: 50,
-                  }}
-                  maxLength={10}
-                  placeholder="Quantity"
-                  multiline={false}
-                  returnKeyLabel="done"
-                  keyboardType="numeric"
-                  underlineColorAndroid="#000000"
-                  onChangeText={this.onChangeQuantity}
-                  onSubmitEditing={this.getNutritionData}
+          {showNutrition ? (
+            <Animated.ScrollView>
+              <View style={styles.nutritionHeader}>
+                <Image
+                  source={{ uri: nutritionPage.picture }}
+                  style={{ width: 100, height: 100, marginBottom: 15 }}
                 />
-                <Picker
-                  style={{ height: 50, width: 150 }}
-                  mode="dialog"
-                  prompt="Select Unit"
-                  selectedValue={nutritionPage.unit}
-                  onValueChange={this.onChangeUnit}
+                <Text style={{ fontSize: 22 }}>{SearchResults.capitalize(nutritionPage.name)}</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
                 >
-                  <Picker.Item label="Grams" value="grams" />
-                  <Picker.Item label="Cups" value="cup" />
-                  <Picker.Item label="Pound" value="pound" />
-                </Picker>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      textAlign:
+                      'center',
+                      fontSize: 18,
+                      width: 50,
+                    }}
+                    maxLength={10}
+                    placeholder="Quantity"
+                    multiline={false}
+                    returnKeyLabel="done"
+                    keyboardType="numeric"
+                    underlineColorAndroid="#000000"
+                    onChangeText={this.onChangeQuantity}
+                    onSubmitEditing={this.getNutritionData}
+                  />
+                  <Picker
+                    style={{ height: 50, width: 150 }}
+                    mode="dialog"
+                    prompt="Select Unit"
+                    selectedValue={nutritionPage.unit}
+                    onValueChange={this.onChangeUnit}
+                  >
+                    {units.map(value => <Picker.Item label={SearchResults.capitalize(value)} value={value} key={value} />)}
+                  </Picker>
+                </View>
               </View>
-            </View>
-            {nutritionData ? (
-              <ScrollView>
-                <NutritionField data={nutritionData.foods[0].nf_calories} title="Calories" fontSize={20} />
-                <NutritionField data={nutritionData.foods[0].nf_total_fat} title="Total Fat" fontSize={16} />
-                <NutritionField data={nutritionData.foods[0].nf_total_carbohydrate} title="Carbohydrate" fontSize={16} />
-              </ScrollView>
-            ) : null}
-          </Animated.ScrollView>
+              {nutritionData ? (
+                <ScrollView>
+                  <NutritionField data={nutritionData.foods[0].nf_calories} title="Calories" fontSize={20} />
+                  <NutritionField data={nutritionData.foods[0].nf_total_fat} title="Total Fat" fontSize={16} />
+                  <NutritionField data={nutritionData.foods[0].nf_total_carbohydrate} title="Carbohydrate" fontSize={16} />
+                </ScrollView>
+              ) : null}
+            </Animated.ScrollView>
+          ) : null}
         </Animated.View>
       </View>
     );
