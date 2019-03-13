@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-one-expression-per-line */
 import React from 'react';
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
   },
 });
 
-let units = ['grams', 'cups', 'pounds', 'kilograms', 'ounces'];
+const units = ['grams', 'cups', 'pounds', 'kilograms', 'ounces'];
 
 export default class SearchResults extends React.Component {
   static capitalize(name) {
