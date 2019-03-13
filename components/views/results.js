@@ -381,9 +381,16 @@ export default class SearchResults extends React.Component {
               </View>
               {nutritionData ? (
                 <ScrollView>
-                  <NutritionField data={nutritionData.foods[0].nf_calories} title="Calories" fontSize={20} />
-                  <NutritionField data={nutritionData.foods[0].nf_total_fat} title="Total Fat" fontSize={16} />
-                  <NutritionField data={nutritionData.foods[0].nf_total_carbohydrate} title="Carbohydrate" fontSize={16} />
+                  <Text style={{ textAlign: 'right', flex: 1 }}>{nutritionPage.quantity} {nutritionPage.unit}</Text>
+                  <NutritionField data={nutritionData.foods[0].nf_calories} title="Calories" fontSize={22} />
+                  <NutritionField data={nutritionData.foods[0].nf_total_fat} title="Total Fat" fontSize={18} />
+                  <NutritionField data={nutritionData.foods[0].nf_saturated_fat} title="Saturated Fat" fontSize={14} />
+                  <NutritionField data={nutritionData.foods[0].nf_cholesterol} title="Cholesterol" fontSize={18} />
+                  <NutritionField data={nutritionData.foods[0].nf_sodium} title="Sodium" fontSize={18} />
+                  <NutritionField data={nutritionData.foods[0].nf_total_carbohydrate} title="Carbohydrate" fontSize={18} />
+                  <NutritionField data={nutritionData.foods[0].nf_dietary_fiber} title="Fiber" fontSize={14} />
+                  <NutritionField data={nutritionData.foods[0].nf_sugars} title="Sugars" fontSize={18} />
+                  <NutritionField data={nutritionData.foods[0].nf_protein} title="Protein" fontSize={18} />
                 </ScrollView>
               ) : null}
             </Animated.ScrollView>
