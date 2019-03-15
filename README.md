@@ -1,6 +1,8 @@
 # Nutlogger Native
 Built with React Native, Nutlogger Native utilizes camera vision to help users identify the nutrition information in their day to day diets.
 
+![Watch The Video](https://media.giphy.com/media/9AIBaPKJRgorXJ5Rjn/giphy.gif)
+
 ## Set Up Guide
 1. Clone this repository
 2. Clone the [Nutserver Repository](https://github.com/callmekungfu/nutserver)
